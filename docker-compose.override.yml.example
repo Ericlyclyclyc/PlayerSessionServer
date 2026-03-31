@@ -1,0 +1,39 @@
+version: '3.8'
+
+# Docker Compose Override File
+# 此文件用于本地开发环境的特殊配置
+# 使用方法: docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
+services:
+  # MySQL本地开发配置
+  mysql:
+    ports:
+      - "3307:3306"  # 使用不同端口避免冲突
+    volumes:
+      # 挂载本地SQL脚本用于测试
+      - ./test-scripts:/docker-entrypoint-initdb.d:ro
+    command:
+      - --general-log=1
+      - --general-log-file=/var/lib/mysql/general.log
+
+  # 应用本地开发配置
+  app:
+    ports:
+      - "8081:8080"  # 使用不同端口避免冲突
+    environment:
+      # 开发环境配置
+      - SPRING_PROFILES_ACTIVE=dev
+      # 启用调试日志
+      - LOGGING_LEVEL_ROOT=DEBUG
+      - LOGGING_LEVEL_ORG_LYC122_DEV_PLAYERSESSIONSERVER=DEBUG
+      - LOGGING_LEVEL_ORG_HIBERNATE_SQL=DEBUG
+      # JVM调试参数
+      - JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseG1GC -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    volumes:
+      # 挂载本地日志目录
+      - ./logs:/app/logs
+      # 挂载配置文件（可选）
+      - ./src/main/resources/application-dev.properties:/app/application-dev.properties:ro
+    # 暴露调试端口
+    ports:
+      - "5005:5005"  # JVM调试端口

@@ -35,6 +35,7 @@ public class Player {
     @Column
     private LocalDateTime offlineTime;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PlayerStatus status = PlayerStatus.OFFLINE;

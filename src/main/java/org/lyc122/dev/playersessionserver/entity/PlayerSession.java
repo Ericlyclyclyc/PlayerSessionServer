@@ -32,7 +32,8 @@ public class PlayerSession {
     
     @Column
     private LocalDateTime logoutAt;
-    
+
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isOnline = true;
     

@@ -117,7 +117,7 @@ public class TokenController {
     /**
      * 查询Token历史记录
      * GET /api/tokens/history?playerId={id}&limit=10&cursor=2026-03-30T10:00:00
-     * 
+     * <p>
      * 参数说明：
      * - playerId: 玩家ID（必填）
      * - limit: 返回的记录数量限制（默认10，最大100）

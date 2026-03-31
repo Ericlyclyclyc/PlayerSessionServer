@@ -37,7 +37,7 @@ Spring后端系统开发需求文档：用于Minecraft多服同步登录插件
 技术栈
 • 框架：Spring Boot 2.x/3.x
 
-• 数据持久化：Spring Data JPA + MySQL/PostgreSQL（或其他关系型数据库）
+• 数据持久化：Spring Data JPA + MySQL 8.4.8
 
 • 安全：Spring Security（可选，用于API保护）
 

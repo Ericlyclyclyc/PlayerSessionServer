@@ -1,0 +1,22 @@
+# Server Configuration
+server.port=8080
+
+# Database Configuration (MySQL)
+spring.datasource.url=your_sql_url
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA Configuration
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# Logging Configuration
+logging.level.root=INFO
+logging.level.org.lyc122.dev.playersessionserver=DEBUG
+logging.level.org.springframework.security=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+logging.level.org.hibernate.type=TRACE
+
+# Jackson Configuration(Timezone)
+spring.jackson.time-zone=Asia/Shanghai

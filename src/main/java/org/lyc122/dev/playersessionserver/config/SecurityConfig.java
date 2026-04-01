@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/players/logout").permitAll() // 临时允许用于测试
                         .requestMatchers("/api/tokens/history").permitAll() // 临时允许用于测试
                         .requestMatchers("/api/test/**").permitAll() // 测试控制器
+                        .requestMatchers("/api/players/delete").permitAll()
                         // 其他所有请求都需要认证
                         .anyRequest().authenticated()
                 )

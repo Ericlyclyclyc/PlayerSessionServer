@@ -23,7 +23,7 @@ public class AccessToken {
     @Column(nullable = false, unique = true, length = 36)
     private String token;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 

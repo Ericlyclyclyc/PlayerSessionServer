@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lyc122.dev.playersessionserver.dto.ApiResponse;
+import org.lyc122.dev.playersessionserver.dto.DeletePlayerRequest;
 import org.lyc122.dev.playersessionserver.dto.LogoutRequest;
 import org.lyc122.dev.playersessionserver.dto.PlayerResponse;
 import org.lyc122.dev.playersessionserver.dto.RegisterRequest;
@@ -93,5 +94,20 @@ public class PlayerController {
         sessionService.endSession(player, request.getServerName());
 
         return ResponseEntity.ok(ApiResponse.success("退出成功", null));
+    }
+
+    /**
+     * 删除玩家
+     * DELETE /api/players/delete
+     * 需要API Key认证
+     */
+    @DeleteMapping("/delete")
+    public ResponseEntity<ApiResponse<Void>> deletePlayer(@Valid @RequestBody DeletePlayerRequest request) {
+        log.info("Delete player request for username: {}", request.getUsername());
+
+        // 删除玩家
+        playerService.deletePlayer(request.getUsername(), request.getUuid());
+
+        return ResponseEntity.ok(ApiResponse.success("玩家删除成功", null));
     }
 }

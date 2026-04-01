@@ -156,4 +156,53 @@ public class PlayerService {
     public List<Player> getAllPlayers() {
         return playerRepository.findAll();
     }
+
+    /**
+     * 删除玩家
+     * 只需要提供username或uuid中的一个即可
+     * 如果玩家在线，则不允许删除
+     * 删除玩家时会级联删除所有关联的AccessToken和TokenEvent
+     */
+    @Transactional
+    public void deletePlayer(String username, String uuid) {
+        // 检查是否至少提供了一个标识符
+        if ((username == null || username.trim().isEmpty()) && (uuid == null || uuid.trim().isEmpty())) {
+            throw new org.lyc122.dev.playersessionserver.exception.InvalidCredentialsException(
+                    "至少需要提供用户名或UUID中的一个"
+            );
+        }
+
+        Player player = null;
+
+        // 根据提供的参数查找玩家
+        if (username != null && !username.trim().isEmpty()) {
+            if (uuid != null && !uuid.trim().isEmpty()) {
+                // 同时提供了username和uuid，需要验证它们匹配
+                player = validatePlayer(username, uuid);
+            } else {
+                // 只提供了username
+                player = getPlayerByUsername(username);
+            }
+        } else {
+            // 只提供了uuid
+            player = getPlayerByUuid(uuid);
+        }
+
+        log.info("Deleting player: {}", player.getUsername());
+
+        // 检查玩家是否在线
+        if (player.getStatus() == Player.PlayerStatus.ONLINE) {
+            throw new org.lyc122.dev.playersessionserver.exception.PlayerConflictException(
+                    "无法删除在线玩家，请先退出游戏"
+            );
+        }
+
+        // 获取玩家ID用于日志
+        Long playerId = player.getId();
+
+        // 删除玩家（由于JPA的关系，会自动删除关联的AccessToken和TokenEvent）
+        playerRepository.delete(player);
+
+        log.info("Player deleted successfully: {}, ID: {}", player.getUsername(), playerId);
+    }
 }

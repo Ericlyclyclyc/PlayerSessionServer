@@ -327,6 +327,62 @@ GET /api/tokens/history?playerId=1&limit=10
 
 ---
 
+### 8. 删除玩家
+
+删除指定的玩家账户及其所有关联数据。**注意：在线玩家无法删除，必须先退出游戏**。
+
+**端点**: `DELETE /players/delete`
+
+**请求体**:
+```json
+{
+  "username": "TestPlayer",
+  "uuid": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+或者只提供username：
+```json
+{
+  "username": "TestPlayer"
+}
+```
+
+或者只提供uuid：
+```json
+{
+  "uuid": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**字段说明**:
+- `username`: 玩家名（可选，但至少需要提供username或uuid中的一个）
+- `uuid`: 玩家UUID（可选，但至少需要提供username或uuid中的一个）
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "玩家删除成功",
+  "data": null,
+  "timestamp": 1774890000000
+}
+```
+
+**行为**:
+- 删除玩家及其所有关联的AccessToken和TokenEvent
+- 玩家必须在离线状态才能删除
+- 删除操作不可逆
+- 支持只提供username或只提供uuid来识别玩家
+- 如果同时提供username和uuid，会验证它们是否匹配
+
+**错误情况**:
+- `409` - 玩家在线，无法删除
+- `404` - 玩家不存在或UUID不匹配
+- `400` - 参数验证失败（未提供username或uuid）
+
+---
+
 ## 数据模型
 
 ### Player（玩家）
@@ -450,6 +506,31 @@ curl -X POST http://localhost:8080/api/tokens/revoke \
   -d '{"username":"TestPlayer","uuid":"550e8400-e29b-41d4-a716-446655440000","token":"your-token-here"}'
 ```
 
+### 删除玩家
+
+方式一：同时提供username和uuid
+```bash
+curl -X DELETE http://localhost:8080/api/players/delete \
+  -H "Content-Type: application/json" \
+  -d '{"username":"TestPlayer","uuid":"550e8400-e29b-41d4-a716-446655440000"}'
+```
+
+方式二：只提供username
+```bash
+curl -X DELETE http://localhost:8080/api/players/delete \
+  -H "Content-Type: application/json" \
+  -d '{"username":"TestPlayer"}'
+```
+
+方式三：只提供uuid
+```bash
+curl -X DELETE http://localhost:8080/api/players/delete \
+  -H "Content-Type: application/json" \
+  -d '{"uuid":"550e8400-e29b-41d4-a716-446655440000"}'
+```
+
+---
+
 ---
 
 ## 错误代码参考
@@ -488,6 +569,14 @@ curl -X POST http://localhost:8080/api/tokens/revoke \
 ---
 
 ## 更新日志
+
+### v3.1
+- 新增玩家删除功能（DELETE /api/players/delete）
+- 删除玩家时级联删除关联的AccessToken和TokenEvent
+- 在线玩家无法删除，必须先退出游戏
+- 改进Entity级联删除配置（AccessToken和TokenEvent）
+- 支持只提供username或uuid中的任意一个来删除玩家
+- 优化参数验证逻辑，提升用户体验
 
 ### v3.0
 - 添加Token失效功能（POST /api/tokens/revoke）
